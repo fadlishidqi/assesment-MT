@@ -67,8 +67,10 @@
                     <input type="text" id="Vnama" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">ID Kelas</label>
-                    <input type="number" id="Nid_kelas" required placeholder="Contoh: 1" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+                    <select id="Nid_kelas" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition">
+                        <option value="">-- Memuat Kelas... --</option>
+                    </select>
                 </div>
             </form>
         </div>
@@ -83,8 +85,10 @@
 @push('scripts')
 <script>
     let allDataSiswa = [];
+    let allDataKelas = []; // Variabel untuk menyimpan data kelas dari API
     const modalEl = document.getElementById('modalSiswa');
 
+    // Load Data Siswa
     async function loadDataSiswa() {
         try {
             const response = await fetch('/api/v1/siswa');
@@ -95,7 +99,27 @@
             populateFilterKelas(allDataSiswa);
         } catch (error) {
             document.getElementById('tbody-siswa').innerHTML = '<tr><td colspan="5" class="py-8 text-center text-sm text-red-500">Gagal memuat data</td></tr>';
-            handleError(error);
+            console.error(error);
+        }
+    }
+
+    // Load Data Kelas untuk Dropdown
+    async function loadDataKelas() {
+        try {
+            const response = await fetch('/api/v1/kelas');
+            if (!response.ok) throw response;
+            const result = await response.json();
+            allDataKelas = result.data;
+            
+            const selectKelas = document.getElementById('Nid_kelas');
+            selectKelas.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            
+            // Render option kelas berdasarkan Vnama_kelas, namun value-nya adalah Nid_kelas
+            allDataKelas.forEach(kelas => {
+                selectKelas.innerHTML += `<option value="${kelas.Nid_kelas}">${kelas.Vnama_kelas}</option>`;
+            });
+        } catch (error) {
+            console.error('Gagal memuat data kelas:', error);
         }
     }
 
@@ -149,7 +173,7 @@
         renderTable(filteredData);
     }
 
-    // Fungsi Modal Tailwind
+    // Fungsi Modal
     function showModalSiswa(mode, data = null) {
         document.getElementById('formSiswa').reset();
         if (mode === 'tambah') {
@@ -187,23 +211,38 @@
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            if (!response.ok) throw response;
+            
+            if (!response.ok) {
+                const errData = await response.json();
+                alert(errData.message || 'Terjadi kesalahan saat menyimpan data');
+                throw response;
+            }
             
             hideModalSiswa();
             loadDataSiswa();
-        } catch (error) { handleError(error); }
+        } catch (error) { 
+            console.error(error); 
+        }
     }
 
     async function hapusSiswa(id) {
-        const isConfirmed = await showConfirm("Hapus Siswa", "Apakah Anda yakin ingin menghapus data siswa ini beserta semua nilainya?");
+        const isConfirmed = confirm("Apakah Anda yakin ingin menghapus data siswa ini beserta semua nilainya?");
         if (!isConfirmed) return;
+        
         try {
             const response = await fetch(`/api/v1/siswa/${id}`, { method: 'DELETE' });
             if (!response.ok) throw response;
             loadDataSiswa();
-        } catch (error) { handleError(error); }
+        } catch (error) { 
+            console.error(error); 
+            alert('Gagal menghapus siswa');
+        }
     }
 
-    document.addEventListener('DOMContentLoaded', loadDataSiswa);
+    // Panggil kedua fungsi (loadSiswa dan loadKelas) saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', () => {
+        loadDataSiswa();
+        loadDataKelas();
+    });
 </script>
 @endpush

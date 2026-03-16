@@ -40,7 +40,8 @@
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 8000); 
 
-            const response = await fetch('/api/v1/dashboard-stats', {
+            // PERBAIKAN: Ubah URL dari '/api/v1/dashboard-stats' menjadi '/api/v1/dashboard/stats'
+            const response = await fetch('/api/v1/dashboard/stats', {
                 method: 'GET',
                 signal: controller.signal,
                 headers: { 'Accept': 'application/json' }
@@ -61,7 +62,7 @@
             document.getElementById('stat-kelas').innerHTML = '<span class="text-red-500 text-lg">Error</span>';
             document.getElementById('stat-mapel').innerHTML = '<span class="text-red-500 text-lg">Error</span>';
             document.getElementById('stat-rata').innerHTML = '<span class="text-red-500 text-lg">Error</span>';
-            handleError(error); 
+            console.error(error); // Ubah handleError(error) menjadi console.error agar tidak error jika fungsi handleError belum didefinisikan
         }
     }
     document.addEventListener('DOMContentLoaded', loadDashboardData);

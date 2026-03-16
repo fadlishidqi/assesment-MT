@@ -168,7 +168,9 @@
             const response = await fetch(`/api/v1/laporan/kelas/${id}`);
             if (!response.ok) throw response;
             const result = await response.json();
-            const dataSiswa = Array.isArray(result.data) ? result.data : Object.values(result.data);
+            
+            // PERBAIKAN 1: Ambil array 'daftar_siswa' langsung dari 'result.data'
+            const dataSiswa = result.data.daftar_siswa || [];
 
             if (dataSiswa.length === 0) {
                 content.innerHTML = '<p class="text-center text-gray-500 py-10 text-sm">Belum ada data nilai di kelas ini.</p>';
@@ -177,6 +179,7 @@
 
             let html = '<div class="grid grid-cols-1 gap-3">';
             dataSiswa.forEach(s => {
+                // PERBAIKAN 2: Ubah s.rata_rata menjadi s.rata_rata_keseluruhan sesuai response API
                 html += `
                     <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex justify-between items-center">
                         <div>
@@ -185,7 +188,7 @@
                         </div>
                         <div class="text-right">
                             <p class="text-[10px] text-gray-400 uppercase tracking-tighter">Rata-rata</p>
-                            <p class="text-lg font-black text-primary">${parseFloat(s.rata_rata).toFixed(2)}</p>
+                            <p class="text-lg font-black text-primary">${parseFloat(s.rata_rata_keseluruhan).toFixed(2)}</p>
                         </div>
                     </div>
                 `;
@@ -195,7 +198,7 @@
 
         } catch (error) {
             content.innerHTML = '<p class="text-center text-red-500 py-10 text-sm">Gagal memuat data kelas.</p>';
-            handleError(error);
+            console.error(error); 
         }
     }
 

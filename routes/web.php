@@ -13,3 +13,7 @@ Route::get('/siswa', function () {
 Route::get('/laporan', function () {
     return view('laporan');
 });
+
+Route::get('/nilai', function () {
+    return view('nilai');
+});

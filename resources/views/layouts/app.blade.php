@@ -27,6 +27,7 @@
                     <a href="/" class="text-gray-500 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
                     <a href="/siswa" class="text-gray-500 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition">Manajemen Siswa</a>
                     <a href="/laporan" class="text-gray-500 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition">Laporan Nilai</a>
+                    <a href="/nilai" class="text-gray-500 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition">Manajemen Nilai</a>
                 </div>
             </div>
         </div>
