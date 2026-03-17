@@ -22,7 +22,7 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', [SiswaController::class, 'destroy']);
     });
 
-    // --- ENDPOINT LAPORAN (Diperbaiki agar URL-nya sesuai dengan frontend) ---
+    // --- ENDPOINT LAPORAN ---
     Route::get('/nilai/laporan', [LaporanController::class, 'index']);
     Route::get('/laporan/kelas/{id_kelas}', [LaporanController::class, 'kelas']);
 
@@ -51,40 +51,49 @@ Route::prefix('v1')->group(function () {
                 ]
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     });
 
-    // --- ENDPOINT KELAS (Daftar Kelas untuk Dropdown) ---
-    Route::get('/kelas', function () {
-        try {
-            return response()->json([
-                'status' => 'success',
-                'data' => Kelas::all()
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    });
-
-    // --- ENDPOINT MAPEL (Daftar Mata Pelajaran untuk Dropdown Nilai) ---
+    // --- ENDPOINT MAPEL ---
     Route::get('/mapel', function () {
         try {
-            return response()->json([
-                'status' => 'success',
-                'data' => Mapel::all()
-            ], 200);
+            return response()->json(['status' => 'success', 'data' => Mapel::all()], 200);
         } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    });
+
+    // --- ENDPOINT KELAS (Daftar Kelas & Tambah Kelas) ---
+    Route::get('/kelas', function () {
+        try {
+            return response()->json(['status' => 'success', 'data' => Kelas::all()], 200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    });
+
+    Route::post('/kelas', function (Illuminate\Http\Request $request) {
+        try {
+            $namaKelas = $request->input('Vnama_kelas') ?? $request->input('nama_kelas');
+
+            if (empty($namaKelas)) {
+                return response()->json(['status' => 'error', 'message' => 'Nama kelas wajib diisi!'], 400);
+            }
+
+            // Gunakan assign manual (Dijamin bebas error mass assignment)
+            $kelas = new Kelas();
+            $kelas->Vnama_kelas = $namaKelas;
+            $kelas->save();
+
             return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+                'status' => 'success', 
+                'message' => 'Kelas berhasil ditambahkan!', 
+                'data' => $kelas
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     });
 

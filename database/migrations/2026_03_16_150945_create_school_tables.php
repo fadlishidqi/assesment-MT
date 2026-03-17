@@ -49,7 +49,6 @@ return new class extends Migration
         });
 
         DB::unprepared('DROP TRIGGER IF EXISTS trg_cek_nilai');
-
         DB::unprepared('
             CREATE TRIGGER trg_cek_nilai BEFORE INSERT ON tbl_nilai
             FOR EACH ROW

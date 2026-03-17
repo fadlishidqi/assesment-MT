@@ -49,10 +49,11 @@ class LaporanController extends Controller
                     'nama_siswa' => $siswa->Vnama,
                     'nis' => $siswa->Nnis,
                     'kelas' => $siswa->kelas->Vnama_kelas ?? '-',
+                    'id_kelas' => $siswa->Nid_kelas, // Ditambahkan agar tombol klik detail kelas berfungsi
                     'detail_nilai' => $detail_nilai,
-                    'rata_rata_keseluruhan' => $kalkulasi->rata_rata ?? 0,
-                    'total_nilai' => $kalkulasi->total_nilai ?? 0,
-                    'predikat' => $kalkulasi->predikat ?? '-',
+                    'rata_rata_keseluruhan' => $kalkulasi?->rata_rata ?? 0,
+                    'total_nilai' => $kalkulasi?->total_nilai ?? 0,
+                    'predikat' => $kalkulasi?->predikat ?? '-',
                 ];
             }
 
@@ -85,8 +86,8 @@ class LaporanController extends Controller
                 $laporan_siswa[] = [
                     'nis' => $siswa->Nnis,
                     'nama_siswa' => $siswa->Vnama,
-                    'rata_rata_keseluruhan' => $kalkulasi->rata_rata ?? 0,
-                    'predikat' => $kalkulasi->predikat ?? '-',
+                    'rata_rata_keseluruhan' => $kalkulasi?->rata_rata ?? 0,
+                    'predikat' => $kalkulasi?->predikat ?? '-',
                 ];
             }
 

@@ -14,28 +14,31 @@ class DatabaseSeeder extends Seeder
     {
         $kelas = Kelas::create(['Vnama_kelas' => '12 IPA 1']);
 
-        $mapel1 = Mapel::create(['Vnama_mapel' => 'Matematika']);
-        $mapel2 = Mapel::create(['Vnama_mapel' => 'Fisika']);
-        $mapel3 = Mapel::create(['Vnama_mapel' => 'Bahasa Indonesia']);
+        $mapels = [
+            Mapel::create(['Vnama_mapel' => 'Matematika']),
+            Mapel::create(['Vnama_mapel' => 'Fisika']),
+            Mapel::create(['Vnama_mapel' => 'Bahasa Indonesia']),
+        ];
 
-        $siswaIds = [];
         for ($i = 1; $i <= 10; $i++) {
             $siswa = Siswa::create([
                 'Nnis' => 1000 + $i,
                 'Vnama' => 'Siswa Dummy ' . $i,
                 'Nid_kelas' => $kelas->Nid_kelas,
             ]);
-            $siswaIds[] = $siswa->Nid_siswa;
-        }
 
-        for ($i = 0; $i < 10; $i++) {
-            Nilai::create([
-                'Nid_siswa' => $siswaIds[array_rand($siswaIds)],
-                'Nid_mapel' => rand(1, 3),
-                'Nuh' => rand(60, 100),
-                'Nuts' => rand(60, 100),
-                'Nuas' => rand(60, 100),
-            ]);
+            foreach ($mapels as $mapel) {
+                Nilai::create([
+                    'Nid_siswa' => $siswa->Nid_siswa,
+                    'Nid_mapel' => $mapel->Nid_mapel,
+                    'Vtahun_ajaran' => '2025/2026', 
+                    'Vsemester' => 'Ganjil',
+                    
+                    'Nuh' => rand(60, 100),
+                    'Nuts' => rand(60, 100),
+                    'Nuas' => rand(60, 100),
+                ]);
+            }
         }
     }
 }
