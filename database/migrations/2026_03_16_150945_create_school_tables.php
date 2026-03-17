@@ -76,13 +76,14 @@ return new class extends Migration
             CREATE PROCEDURE sp_hitung_rata_rata_siswa(IN p_Nid_siswa INT)
             BEGIN
                 SELECT 
-                    AVG((Nuh + Nuts + Nuas) / 3) AS rata_rata,
-                    SUM(Nuh + Nuts + Nuas) AS total_nilai,
+                    IFNULL(AVG((Nuh + Nuts + Nuas) / 3), 0) AS rata_rata,
+                    IFNULL(SUM(Nuh + Nuts + Nuas), 0) AS total_nilai,
                     CASE 
                         WHEN AVG((Nuh + Nuts + Nuas) / 3) >= 85 THEN "A"
                         WHEN AVG((Nuh + Nuts + Nuas) / 3) >= 70 THEN "B"
                         WHEN AVG((Nuh + Nuts + Nuas) / 3) >= 55 THEN "C"
-                        ELSE "D"
+                        WHEN AVG((Nuh + Nuts + Nuas) / 3) < 55 THEN "D"
+                        ELSE
                     END AS predikat
                 FROM tbl_nilai
                 WHERE Nid_siswa = p_Nid_siswa;
