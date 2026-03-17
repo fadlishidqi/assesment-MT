@@ -35,11 +35,10 @@ class SiswaController extends Controller
     {
         try {
             $request->validate([
-                'Nnis' => 'required|numeric|unique:tbl_siswa,Nnis', // Tambahkan unique:tbl_siswa,Nnis
+                'Nnis' => 'required|numeric|unique:tbl_siswa,Nnis',
                 'Vnama' => 'required|string|max:255',
                 'Nid_kelas' => 'required|exists:tbl_kelas,Nid_kelas',
             ], [
-                // Pesan error kustom agar lebih jelas dibaca pengguna
                 'Nnis.unique' => 'NIS ini sudah terdaftar. Silakan gunakan NIS lain.',
                 'Nnis.required' => 'NIS wajib diisi.',
                 'Vnama.required' => 'Nama lengkap wajib diisi.',
@@ -58,13 +57,13 @@ class SiswaController extends Controller
                 'data' => $siswa
             ], 201);
             
-        // Gunakan ValidationException untuk menangkap error validasi dari $request->validate()
         } catch (\Illuminate\Validation\ValidationException $e) { 
              return response()->json([
                 'status' => 'error',
                 'message' => 'Validasi gagal',
-                'errors' => $e->errors() // Ini akan berisi detail errornya (misal: 'Nnis' => ['NIS ini sudah terdaftar...'])
-            ], 422); // 422 Unprocessable Entity adalah kode HTTP standar untuk error validasi
+                'errors' => $e->errors()
+            ], 422);
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

@@ -1,19 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Api\SiswaController;
 use App\Http\Controllers\Api\LaporanController;
 use App\Http\Controllers\Api\NilaiController;
-
-use App\Models\Siswa;
-use App\Models\Kelas;
-use App\Models\Mapel;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\MapelController;
+use App\Http\Controllers\Api\KelasController;
 
 Route::prefix('v1')->group(function () {
 
-    // --- ENDPOINT SISWA ---
+    // Siswa
     Route::prefix('siswa')->group(function () {
         Route::get('/', [SiswaController::class, 'index']);
         Route::post('/', [SiswaController::class, 'store']);
@@ -22,11 +20,11 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', [SiswaController::class, 'destroy']);
     });
 
-    // --- ENDPOINT LAPORAN ---
+    // Laporan
     Route::get('/nilai/laporan', [LaporanController::class, 'index']);
     Route::get('/laporan/kelas/{id_kelas}', [LaporanController::class, 'kelas']);
 
-    // --- ENDPOINT CRUD NILAI ---
+    // Nilai
     Route::prefix('nilai')->group(function () {
         Route::get('/', [NilaiController::class, 'index']);
         Route::post('/', [NilaiController::class, 'store']);
@@ -34,67 +32,14 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', [NilaiController::class, 'destroy']);
     });
 
-    // --- ENDPOINT DASHBOARD STATS ---
-    Route::get('/dashboard/stats', function () {
-        try {
-            $rataRata = DB::table('tbl_nilai')
-                ->selectRaw('AVG((Nuh + Nuts + Nuas) / 3) as grand_average')
-                ->value('grand_average');
+    // Dashboard
+    Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
-            return response()->json([
-                'status' => 'success',
-                'data' => [
-                    'total_siswa' => Siswa::count(),
-                    'total_kelas' => Kelas::count(),
-                    'total_mapel' => Mapel::count(),
-                    'rata_rata_keseluruhan' => round($rataRata ?? 0, 2)
-                ]
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
-        }
-    });
+    // Mapel
+    Route::get('/mapel', [MapelController::class, 'index']);
 
-    // --- ENDPOINT MAPEL ---
-    Route::get('/mapel', function () {
-        try {
-            return response()->json(['status' => 'success', 'data' => Mapel::all()], 200);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
-        }
-    });
-
-    // --- ENDPOINT KELAS (Daftar Kelas & Tambah Kelas) ---
-    Route::get('/kelas', function () {
-        try {
-            return response()->json(['status' => 'success', 'data' => Kelas::all()], 200);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
-        }
-    });
-
-    Route::post('/kelas', function (Illuminate\Http\Request $request) {
-        try {
-            $namaKelas = $request->input('Vnama_kelas') ?? $request->input('nama_kelas');
-
-            if (empty($namaKelas)) {
-                return response()->json(['status' => 'error', 'message' => 'Nama kelas wajib diisi!'], 400);
-            }
-
-            // Gunakan assign manual (Dijamin bebas error mass assignment)
-            $kelas = new Kelas();
-            $kelas->Vnama_kelas = $namaKelas;
-            $kelas->save();
-
-            return response()->json([
-                'status' => 'success', 
-                'message' => 'Kelas berhasil ditambahkan!', 
-                'data' => $kelas
-            ], 201);
-
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
-        }
-    });
+    // Kelas
+    Route::get('/kelas', [KelasController::class, 'index']);
+    Route::post('/kelas', [KelasController::class, 'store']);
 
 });

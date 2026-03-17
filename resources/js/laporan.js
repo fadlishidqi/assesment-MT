@@ -156,5 +156,4 @@ window.exportToCSV = function() {
     link.click();
 }
 
-// Menjalankan fetch data otomatis saat halaman selesai di-load
 document.addEventListener('DOMContentLoaded', window.loadDataLaporan);

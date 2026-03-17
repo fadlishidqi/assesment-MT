@@ -3,7 +3,6 @@ window.allDataKelas = [];
 window.modalElSiswa = null; 
 window.modalElKelas = null; 
 
-// ================= LOAD DATA =================
 window.loadDataSiswa = async function() {
     try {
         const response = await fetch('/api/v1/siswa');
@@ -36,7 +35,6 @@ window.loadDataKelasSiswa = async function() {
     }
 }
 
-// ================= RENDER & FILTER TABEL =================
 function renderTableSiswa(data) {
     const tbody = document.getElementById('tbody-siswa');
     tbody.innerHTML = '';
@@ -87,7 +85,6 @@ window.filterTable = function() {
     renderTableSiswa(filteredData);
 }
 
-// ================= CRUD SISWA =================
 window.showModalSiswa = function(mode, data = null) {
     document.getElementById('formSiswa').reset();
     if (mode === 'tambah') {
@@ -142,24 +139,22 @@ window.simpanSiswa = function() {
                     body: JSON.stringify(payload)
                 });
                 
-                const responseData = await response.json(); // Ambil isi response-nya dulu
+                const responseData = await response.json();
                 
                 if (!response.ok) {
-                    // Pengecekan Error Validasi (Kode 422 dari Controller)
                     let errorMsg = responseData.message || 'Terjadi kesalahan saat menyimpan data';
                     
                     if (responseData.errors) {
                         errorMsg = Object.values(responseData.errors)[0][0]; 
                     }
                     
-                    throw new Error(errorMsg); // Lempar error ke blok catch
+                    throw new Error(errorMsg);
                 }
                 
                 Swal.fire('Berhasil!', 'Data siswa berhasil disimpan.', 'success');
                 window.hideModalSiswa();
                 window.loadDataSiswa(); 
             } catch (error) { 
-                // Tampilkan pesan error spesifik yang dilempar dari throw new Error()
                 Swal.fire('Gagal!', error.message, 'error');
             }
         }
@@ -191,7 +186,6 @@ window.hapusSiswa = function(id) {
     });
 }
 
-// ================= TAMBAH KELAS =================
 window.showModalKelas = function() {
     document.getElementById('formKelas').reset();
     window.modalElKelas.classList.remove('hidden');

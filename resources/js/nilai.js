@@ -109,13 +109,12 @@ window.simpanNilai = function() {
         Nuas: document.getElementById('Nuas').value
     };
 
-    // Validasi kosong
+    // Validasi
     if (!payload.Nid_siswa || !payload.Nid_mapel || !payload.Vtahun_ajaran || !payload.Vsemester || payload.Nuh === '' || payload.Nuts === '' || payload.Nuas === '') {
         Swal.fire({ icon: 'warning', title: 'Peringatan', text: 'Pastikan semua kolom telah diisi!' });
         return;
     }
 
-    // ================= VALIDASI NILAI 0 - 100 =================
     const uh = parseFloat(payload.Nuh);
     const uts = parseFloat(payload.Nuts);
     const uas = parseFloat(payload.Nuas);
@@ -128,7 +127,6 @@ window.simpanNilai = function() {
         });
         return;
     }
-    // =========================================================
 
     Swal.fire({
         title: 'Konfirmasi Penyimpanan',
