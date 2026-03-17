@@ -142,15 +142,24 @@ window.simpanSiswa = function() {
                     body: JSON.stringify(payload)
                 });
                 
+                const responseData = await response.json(); // Ambil isi response-nya dulu
+                
                 if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.message || 'Terjadi kesalahan saat menyimpan data');
+                    // Pengecekan Error Validasi (Kode 422 dari Controller)
+                    let errorMsg = responseData.message || 'Terjadi kesalahan saat menyimpan data';
+                    
+                    if (responseData.errors) {
+                        errorMsg = Object.values(responseData.errors)[0][0]; 
+                    }
+                    
+                    throw new Error(errorMsg); // Lempar error ke blok catch
                 }
                 
                 Swal.fire('Berhasil!', 'Data siswa berhasil disimpan.', 'success');
                 window.hideModalSiswa();
                 window.loadDataSiswa(); 
             } catch (error) { 
+                // Tampilkan pesan error spesifik yang dilempar dari throw new Error()
                 Swal.fire('Gagal!', error.message, 'error');
             }
         }

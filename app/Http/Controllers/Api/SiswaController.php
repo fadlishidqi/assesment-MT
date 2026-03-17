@@ -34,37 +34,41 @@ class SiswaController extends Controller
     public function store(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'Nnis' => 'required|numeric|unique:tbl_siswa,Nnis',
-                'Vnama' => 'required|string|max:100',
-                'Nid_kelas' => 'required|exists:tbl_kelas,Nid_kelas'
+            $request->validate([
+                'Nnis' => 'required|numeric|unique:tbl_siswa,Nnis', // Tambahkan unique:tbl_siswa,Nnis
+                'Vnama' => 'required|string|max:255',
+                'Nid_kelas' => 'required|exists:tbl_kelas,Nid_kelas',
+            ], [
+                // Pesan error kustom agar lebih jelas dibaca pengguna
+                'Nnis.unique' => 'NIS ini sudah terdaftar. Silakan gunakan NIS lain.',
+                'Nnis.required' => 'NIS wajib diisi.',
+                'Vnama.required' => 'Nama lengkap wajib diisi.',
+                'Nid_kelas.required' => 'Kelas wajib dipilih.',
             ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Bad Request: Validasi Gagal',
-                    'errors' => $validator->errors()
-                ], 400);
-            }
 
             $siswa = Siswa::create([
                 'Nnis' => $request->Nnis,
                 'Vnama' => $request->Vnama,
-                'Nid_kelas' => $request->Nid_kelas
+                'Nid_kelas' => $request->Nid_kelas,
             ]);
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Data siswa berhasil ditambahkan',
+                'message' => 'Siswa berhasil ditambahkan!',
                 'data' => $siswa
             ], 201);
-
-        } catch (Exception $e) {
+            
+        // Gunakan ValidationException untuk menangkap error validasi dari $request->validate()
+        } catch (\Illuminate\Validation\ValidationException $e) { 
+             return response()->json([
+                'status' => 'error',
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors() // Ini akan berisi detail errornya (misal: 'Nnis' => ['NIS ini sudah terdaftar...'])
+            ], 422); // 422 Unprocessable Entity adalah kode HTTP standar untuk error validasi
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Internal Server Error',
-                'error' => $e->getMessage()
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
             ], 500);
         }
     }

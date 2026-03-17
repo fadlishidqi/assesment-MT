@@ -17,7 +17,6 @@ window.loadDataNilai = async function() {
         result.data.forEach((item, index) => {
             const tr = document.createElement('tr');
             tr.className = "hover:bg-gray-50 transition";
-            // PENTING: Penambahan window. pada onclick
             tr.innerHTML = `
                 <td class="py-3 px-4 text-sm text-gray-900 text-center">${index + 1}</td>
                 <td class="py-3 px-4 text-sm font-bold text-gray-800">${item.siswa ? item.siswa.Vnama : '-'}</td>
