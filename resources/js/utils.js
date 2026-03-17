@@ -27,14 +27,14 @@ window.handleError = function(error) {
             toast.classList.add('translate-y-full', 'opacity-0');
         }, 5000);
     }
-};
+}
 
 window.showConfirm = function(title, message) {
     return new Promise((resolve) => {
         const modalEl = document.getElementById('customConfirmModal');
         
         if (!modalEl) {
-            console.error("Modal element tidak ditemukan!");
+            console.error("Modal element not found!");
             resolve(false);
             return;
         }
@@ -57,4 +57,4 @@ window.showConfirm = function(title, message) {
             resolve(false);
         };
     });
-};
+}
